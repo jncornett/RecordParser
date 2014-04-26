@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>dfa.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="dfa.html">
+                dfa.coffee
+              </a>
+            
+              
+              <a class="source" href="node.html">
+                node.coffee
+              </a>
+            
+              
+              <a class="source" href="utils.html">
+                utils.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>dfa.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="imports">Imports</h2>
+<hr>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node = node.Node
+Tree = node.Tree
+extend = utils.extend</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="token">Token</h2>
+<hr>
+<p>Basic token for regular expression parsing
+The following types are defined</p>
+<ul>
+<li><code>/</code> match exactly 1 character with the metadata</li>
+<li><code>*</code> match 0 or more characters with the metadata</li>
+<li><code>?</code> match 0 or 1 characters with the metadata</li>
+<li><code>|</code> branch the current path into to directions, metadata is a list of children</li>
+<li><code>()</code> open and close an anonymous capture group</li>
+<li><code>{}</code> open and close a named capture group</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Token</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Node</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h4 id="constructor">constructor</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(<span class="hljs-property">@type</span>, <span class="hljs-property">@meta</span>, next)</span> -&gt;</span> <span class="hljs-keyword">super</span> next</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="path">Path</h2>
+<hr>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Path</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Tree</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h4 id="constructor">constructor</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(root)</span> -&gt;</span>
+		<span class="hljs-keyword">super</span> root
+		<span class="hljs-property">@pointer</span> = <span class="hljs-number">0</span>
+		<span class="hljs-property">@anonStack</span> = []
+		<span class="hljs-property">@anonRanges</span> = []
+		<span class="hljs-property">@namedStack</span> = []
+		<span class="hljs-property">@namedRanges</span> = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h4 id="consumetoken">consumeToken</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">consumeToken</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-property">@next</span>()
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h4 id="advancepointer">advancePointer</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">advancePointer</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-property">@pointer</span>++
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h4 id="beginanonymouscapture">beginAnonymousCapture</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">beginAnonymousCapture</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-property">@anonStack</span>.push [<span class="hljs-string">"("</span>, <span class="hljs-property">@pointer</span>]
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h4 id="endanonymouscapture">endAnonymousCapture</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">endAnonymousCapture</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-property">@anonRanges</span>.push [<span class="hljs-property">@anonStack</span>.pop().pop(), <span class="hljs-property">@pointer</span>]
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h4 id="beginnamedcapture">beginNamedCapture</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">beginNamedCapture</span>: <span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Trying to maintain a degree of separation between
+<a href="section-2"><code>Token</code></a> implementation and <code>Path</code> implementation.
+Thus, <code>name</code> is passed in as an argument and not pulled from <code>node</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-property">@namedStack</span>.push [<span class="hljs-string">"{"</span>, <span class="hljs-property">@pointer</span>, name]
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h4 id="endnamedcapture">endNamedCapture</h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">endNamedCapture</span>:<span class="hljs-function"> -&gt;</span>
+		[symbol, startPointer, name] = <span class="hljs-property">@namedStack</span>.pop()
+		<span class="hljs-property">@namedRanges</span>[name] = [startPointer, <span class="hljs-property">@pointer</span>]
+		@</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h4 id="flushallcaptures">flushAllCaptures</h4>
+<p>Immediately close all capture groups.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-attribute">flushAllCaptures</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-keyword">while</span> <span class="hljs-property">@anonStack</span>[<span class="hljs-number">0</span>]?
+			<span class="hljs-property">@endAnonymousCapture</span>()
+
+		<span class="hljs-keyword">while</span> <span class="hljs-property">@namedStack</span>[<span class="hljs-number">0</span>]?
+			<span class="hljs-property">@endNamedCapture</span>()
+
+	<span class="hljs-attribute">reset</span>:<span class="hljs-function"> -&gt;</span>
+		<span class="hljs-keyword">super</span>()
+		<span class="hljs-property">@pointer</span> = <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h2 id="execute">execute</h2>
+<hr>
+<p>Executes a Regular Expression search on a sequence of characters.
+A character can be any object, it is not restricted to being a one char string.
+Returns a stateful <a href="#section-4"><code>Path</code></a> object if there is a successful match, <code>null</code> otherwise.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">execute</span> = <span class="hljs-params">(sequence, rootToken)</span> -&gt;</span>
+	
+	paths = [<span class="hljs-keyword">new</span> Path <span class="hljs-keyword">new</span> Node rootToken]
+
+	<span class="hljs-keyword">while</span> paths[<span class="hljs-number">0</span>]?
+
+		keep = []
+
+		<span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> paths
+
+			<span class="hljs-keyword">if</span> path.pointer <span class="hljs-keyword">is</span> sequence.length</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>The current path has reached the end of a sequence.
+It’s completely matched a (sub)string of <code>sequence</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+				<span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> path.node?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>The current path has also consumed all of its tokens.
+It’s a perfect match for <code>sequence</code>. 
+This is a successful end condition.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Current path</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">return</span> path
+
+				<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> path.node.type <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> [<span class="hljs-string">"}"</span>, <span class="hljs-string">")"</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>We need to clean up the straggling group closures</p>
+<p><em>TODO: Or do we? can we just automatically close them?</em></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Any path nodes that aren’t these kinds of closures are
+dead-ends, because there aren’t any characters left in the sequence!
+Avoid adding them to <code>keep</code> by <code>continue</code>ing.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">continue</span>
+
+			<span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> path.node?</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>We haven’t reached the end of the sequence, but this path
+has consumed all of its <a href="#section-2"><code>Token</code></a>s</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+				<span class="hljs-keyword">if</span> paths.length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>There are no other paths to consider, so the best we can hope for
+is a partial match</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Close all open groups.</p>
+<p><em>TODO: As referenced in a previous <code>if</code> block. Maybe we can export
+this functionality and use it in both exit points.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+					<span class="hljs-keyword">for</span> [symbol, pointer, name] <span class="hljs-keyword">in</span> path.stack
+						range = [pointer, path.pointer]
+						<span class="hljs-keyword">if</span> name? 
+							path.namedRanges[name] = range
+						<span class="hljs-keyword">else</span>
+							path.anonRanges.push range
+
+					<span class="hljs-keyword">return</span> path
+
+				<span class="hljs-keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>There are other paths, and this one just consumed too many tokens.
+(Perhaps, the current token is a greedy asterisk?).
+Either way, this isn’t a viable path, so we won’t push it onto the <code>keep</code>
+stack.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">continue</span>
+
+			<span class="hljs-keyword">switch</span> path.type</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h5 id="-">/</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"/"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Raw match. Match one token to one character.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span> path.node.meta sequence[path.pointer]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Only keep the current path if there’s a match</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						keep.push path.consumeToken().advancePointer()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <h5 id="-">*</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"*"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Branching match. Match zero or more characters.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span> path.node.meta sequence[path.pointer]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>One possibility is to be greedy. Keep the same token and try to match more!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						keep.push path.copy().advancePointer()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Or we can be nice and go to the next token</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						keep.push path.copy().consumeToken().advancePointer()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Zero matches. It’s okay, just go to the next token.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					keep.push path.consumeToken()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <h5 id="-">?</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"?"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Branching match. Match zero or one character.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">if</span> path.node.meta sequence[path.pointer]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Unlike <code>*</code>, <code>?</code> isn’t greedy. Consume the token and advance the pointer.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						keep.push path.consumeToken().advancePointer()
+
+					<span class="hljs-keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>No match, no worries. Next token!</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						keep.push path.consumeToken()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <h5 id="-">|</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"|"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Branch/path splitting. A <code>|</code> node doesn’t have a <code>next</code>. The children
+are stored in the <code>meta</code> property.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">for</span> child <span class="hljs-keyword">in</span> path.node.meta
+						path_ = path.copy()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p><em>TODO: While it doesn’t matter much in the current implementation,
+branching creates a broken link between the current node and the root
+node in each path. One fix would be to make <a href="section-2"><code>Token</code></a><code>.next</code> an
+array by default. Then, the task would merely be to prune each copy of path
+to contain only one <code>node</code> property.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>						path_.node = child
+
+						keep.push path_</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <h5 id="-">(</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"("</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>start anonymous capture</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					keep.push path.beginAnonymousCapture().consumeToken()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <h5 id="-">)</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">")"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>end anonymous capture</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					keep.push path.endAnonymousCapture().consumeToken()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <h5 id="-">{</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"{"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>start named capture</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					keep.push path.beginNamedCapture(path.node.meta).consumeToken()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <h5 id="-">}</h5>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>				<span class="hljs-keyword">when</span> <span class="hljs-string">"}"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>end named capture</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					keep.push path.endNamedCapture().consumeToken()
+
+				<span class="hljs-keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p><em>TODO: Possibly just ignore unrecognized tokens? This would allow
+metadata such as comments to remain in the linked list.</em></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>					<span class="hljs-keyword">throw</span> <span class="hljs-string">"SymbolError: Unrecognized Token Type"</span>
+
+		paths = keep</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>Return <code>null</code> on no match</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <h2 id="exports">Exports</h2>
+<hr>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-property">@dfa</span> =
+	<span class="hljs-attribute">Token</span>: Token
+	<span class="hljs-attribute">Path</span>: Path
+	<span class="hljs-attribute">execute</span>: execute
+
+<span class="hljs-keyword">if</span> <span class="hljs-built_in">exports</span>?
+	extend <span class="hljs-built_in">exports</span>, <span class="hljs-property">@dfa</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
